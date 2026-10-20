@@ -1,6 +1,6 @@
 # Awi Code — Invoice & Receipt Manager
 
-Baseline source **v1.0.3** berdasarkan PRD Awi Code tanggal 25 Agustus 2026.
+Baseline source **v1.0.4** berdasarkan PRD Awi Code tanggal 25 Agustus 2026.
 
 Aplikasi internal satu-owner untuk mencatat transaksi jasa dan menghasilkan **Invoice** serta **Receipt** dari satu sumber data yang sama.
 
@@ -238,3 +238,66 @@ php artisan optimize:clear
 ```
 
 Tidak perlu menjalankan migration untuk v1.0.3.
+
+## Perubahan v1.0.4 — Responsive, Rekap & Koreksi Total
+
+### Tampilan responsive
+
+- Navigasi mobile memperoleh tombol tutup; drawer dapat ditutup lewat backdrop, tombol, Escape, atau setelah klik menu.
+- Konten, stat cards, form filter, form item, ringkasan dan topbar ditata ulang pada tablet dan ponsel.
+- Daftar customer, transaksi, dokumen, jenis jasa, item, pembayaran dan dashboard berubah menjadi kartu berlabel pada layar kecil; desktop tetap memakai tabel.
+- Light/Dark Mode dan palette Awi Code tetap dipertahankan; dokumen Invoice/Receipt publik tidak berubah gaya cetaknya.
+
+### Rekap bulanan/tahunan
+
+- Menu **Rekap Bulanan / Tahunan**: `GET /reports`.
+- Pilih Bulanan atau Tahunan, tahun, dan bulan (hanya untuk mode bulanan).
+- Total nilai transaksi, pembayaran, sisa, jumlah transaksi/lunas; rincian transaksi beserta status pembayaran.
+- Laporan tahunan menampilkan 12 bulan dan grafik perbandingan sederhana.
+- **Cetak Rekap** dari browser dan **Unduh PDF** A4 landscape (`GET /reports/pdf`).
+- Rekap **hanya transaksi Final**, transaksi Draft/Dibatalkan tidak dihitung.
+- **Semua angka berdasarkan tanggal transaksi**, bukan tanggal DP/pelunasan. Pembayaran tidak mempunyai kolom tanggal terpisah pada versi ini, sehingga laporan tidak boleh ditafsirkan sebagai arus kas bulanan.
+- Jika sebuah transaksi berganti nilai di kemudian hari, laporan periode tanggal transaksinya mengikuti **nilai terkini**; snapshot dokumen Invoice/Receipt tidak otomatis berubah.
+
+### Fix perubahan item setelah DP
+
+- Akar masalah: `loadMissing('items', 'payments')` di `TransactionCalculator` mempertahankan koleksi item lama yang telah dihapus dan dibuat ulang saat `update`. Perhitungan memakai koleksi stale sampai request selanjutnya.
+- Diganti dengan **reload paksa kedua relasi dari database** saat recalculation sehingga satu kali Simpan langsung memperbarui nilai subtotal, diskon, total, sudah dibayar, sisa, dan status.
+- Validasi estimasi total menyelaraskan aturan pembulatan qty dan harga dengan `syncItems`.
+- DP tetap tersimpan. Receipt/Invoice lama mempertahankan snapshot seperti sebelumnya dan harus di-refresh eksplisit bila diperlukan.
+
+### Pemeliharaan nilai lama
+
+Cek apakah transaksi di database masih memiliki total stale dari versi sebelumnya:
+
+```bash
+php artisan awicode:recalculate-totals
+```
+
+Perintah di atas **hanya memeriksa** dan tidak mengubah data. Jika ditemukan ketidaksinkronan, lakukan backup database terlebih dahulu, lalu perbaiki melalui:
+
+```bash
+php artisan awicode:recalculate-totals --apply
+```
+
+**PENTING:** perintah ini memperbarui total transaksi internal, **tidak menyunting snapshot PDF/Invoice/Receipt yang sebelumnya dibagikan**. Tinjau dan klik Perbarui Snapshot pada dokumen terkait hanya jika memang ingin mengganti dokumen publiknya.
+
+### Upgrade v1.0.3 → v1.0.4
+
+1. Backup database dan source yang sedang berjalan.
+2. Overlay isi patch v1.0.4 (folder `app/`, `routes/`, `resources/`, `public/assets/`, `VERSION` dan README).
+3. Jalankan `php artisan optimize:clear`, restart server bila perlu.
+4. Jika memakai Hostinger `app/` + `public_html/` terpisah, salin **hanya asset** baru:
+
+   ```bash
+   cd ~/domains/invoice.awicode.com
+   cp app/public/assets/app.css public_html/assets/app.css
+   cp app/public/assets/app.js public_html/assets/app.js
+   cd app
+   php artisan optimize:clear
+   ```
+
+5. Tes halaman `/reports`, cetak, PDF, dan alur edit transaksi dengan DP.
+6. **Tidak ada migration baru**; jangan jalankan `migrate:fresh`.
+
+Detail skenario pengujian ada pada `docs/QA-v1.0.4.md`.

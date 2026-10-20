@@ -236,7 +236,7 @@ class TransactionController extends Controller
 
     private function projectedGrandTotal(array $validated): float
     {
-        $subtotal = collect($validated['items'])->sum(fn ($item) => (float) $item['quantity'] * (float) $item['unit_price']);
+        $subtotal = collect($validated['items'])->sum(fn ($item) => round(round((float) $item['quantity'], 2) * round((float) $item['unit_price'], 2), 2));
         $type = $validated['discount_type'] ?? null;
         $value = (float) ($validated['discount_value'] ?? 0);
         $discount = 0.0;
@@ -247,7 +247,7 @@ class TransactionController extends Controller
 
     private function validateDiscountAgainstItems(array $validated): void
     {
-        $subtotal = collect($validated['items'])->sum(fn ($item) => (float) $item['quantity'] * (float) $item['unit_price']);
+        $subtotal = collect($validated['items'])->sum(fn ($item) => round(round((float) $item['quantity'], 2) * round((float) $item['unit_price'], 2), 2));
         $type = $validated['discount_type'] ?? null;
         $value = (float) ($validated['discount_value'] ?? 0);
 

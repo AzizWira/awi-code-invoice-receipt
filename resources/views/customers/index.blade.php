@@ -15,14 +15,14 @@
 @if($customers->isEmpty())
 <div class="empty-state"><strong>Belum ada customer</strong><span>Tambahkan customer pertama untuk mulai membuat transaksi.</span></div>
 @else
-<div class="table-wrap"><table class="data-table">
+<div class="table-wrap"><table class="data-table responsive-cards">
 <thead><tr><th>Customer</th><th>Kontak</th><th>Transaksi</th><th>Status</th><th></th></tr></thead>
 <tbody>@foreach($customers as $customer)<tr>
-<td><div class="table-title">{{ $customer->company_name ?: $customer->name }}</div><div class="table-sub">{{ $customer->company_name ? 'PIC: '.$customer->name : 'Perorangan' }}</div></td>
-<td><div>{{ $customer->whatsapp ?: '—' }}</div><div class="table-sub">{{ $customer->email ?: '—' }}</div></td>
-<td>{{ number_format($customer->transactions_count) }}</td>
-<td><span class="badge {{ $customer->archived_at ? 'danger' : 'success' }}">{{ $customer->archived_at ? 'Arsip' : 'Aktif' }}</span></td>
-<td><div class="button-row"><a class="btn btn-ghost" href="{{ route('customers.show',$customer) }}">Detail</a>@if($customer->archived_at)<form method="POST" action="{{ route('customers.restore',$customer) }}" data-submit-lock>@csrf<button class="btn btn-soft">Pulihkan</button></form>@endif</div></td>
+<td data-label="Customer"><div class="table-title">{{ $customer->company_name ?: $customer->name }}</div><div class="table-sub">{{ $customer->company_name ? 'PIC: '.$customer->name : 'Perorangan' }}</div></td>
+<td data-label="Kontak"><div>{{ $customer->whatsapp ?: '—' }}</div><div class="table-sub">{{ $customer->email ?: '—' }}</div></td>
+<td data-label="Transaksi">{{ number_format($customer->transactions_count) }}</td>
+<td data-label="Status"><span class="badge {{ $customer->archived_at ? 'danger' : 'success' }}">{{ $customer->archived_at ? 'Arsip' : 'Aktif' }}</span></td>
+<td data-label="Aksi"><div class="button-row"><a class="btn btn-ghost" href="{{ route('customers.show',$customer) }}">Detail</a>@if($customer->archived_at)<form method="POST" action="{{ route('customers.restore',$customer) }}" data-submit-lock>@csrf<button class="btn btn-soft">Pulihkan</button></form>@endif</div></td>
 </tr>@endforeach</tbody></table></div>
 <div class="card-pad">{{ $customers->links('components.pagination') }}</div>
 @endif

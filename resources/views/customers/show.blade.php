@@ -13,8 +13,8 @@
 </div>
 <div class="card" style="margin-top:18px"><div class="card-header"><h2>Riwayat Transaksi</h2></div>
 @if($transactions->isEmpty())<div class="empty-state"><strong>Belum ada transaksi</strong><span>Customer ini belum mempunyai riwayat transaksi.</span></div>@else
-<div class="table-wrap"><table class="data-table"><thead><tr><th>Project</th><th>Total</th><th>Status</th><th>Tanggal</th><th></th></tr></thead><tbody>
-@foreach($transactions as $t)<tr><td><div class="table-title">{{ $t->project_name }}</div><div class="table-sub">{{ $t->internal_code }}</div></td><td class="money">{{ \App\Support\Money::rupiah($t->grand_total) }}</td><td><span class="badge {{ $t->payment_status==='lunas'?'success':($t->payment_status==='sebagian'?'warning':'') }}">{{ $t->paymentStatusLabel() }}</span></td><td>{{ $t->transaction_date?->format('d M Y') }}</td><td><a class="btn btn-ghost" href="{{ route('transactions.show',$t) }}">Detail</a></td></tr>@endforeach
+<div class="table-wrap"><table class="data-table responsive-cards"><thead><tr><th>Project</th><th>Total</th><th>Status</th><th>Tanggal</th><th></th></tr></thead><tbody>
+@foreach($transactions as $t)<tr><td data-label="Project"><div class="table-title">{{ $t->project_name }}</div><div class="table-sub">{{ $t->internal_code }}</div></td><td data-label="Total" class="money">{{ \App\Support\Money::rupiah($t->grand_total) }}</td><td data-label="Status"><span class="badge {{ $t->payment_status==='lunas'?'success':($t->payment_status==='sebagian'?'warning':'') }}">{{ $t->paymentStatusLabel() }}</span></td><td data-label="Tanggal">{{ $t->transaction_date?->format('d M Y') }}</td><td data-label="Aksi"><a class="btn btn-ghost" href="{{ route('transactions.show',$t) }}">Detail</a></td></tr>@endforeach
 </tbody></table></div><div class="card-pad">{{ $transactions->links('components.pagination') }}</div>@endif
 </div>
 </div>

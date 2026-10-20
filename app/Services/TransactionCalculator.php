@@ -8,7 +8,9 @@ class TransactionCalculator
 {
     public function recalculate(Transaction $transaction): Transaction
     {
-        $transaction->loadMissing('items', 'payments');
+        // Wajib refresh relasi: pada edit, item lama dihapus lalu dibuat ulang dalam request yang sama.
+        // loadMissing() akan mempertahankan item lama sehingga total baru terlambat satu kali simpan.
+        $transaction->load(['items', 'payments']);
         $subtotal = round((float) $transaction->items->sum(fn ($item) => (float) $item->line_total), 2);
         $discountValue = max(0, (float) $transaction->discount_value);
         $discountAmount = 0;

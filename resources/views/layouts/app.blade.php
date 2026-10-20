@@ -12,7 +12,7 @@
             document.documentElement.dataset.theme = saved === 'dark' ? 'dark' : 'light';
         })();
     </script>
-    <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v=1.0.3">
+    <link rel="stylesheet" href="{{ asset('assets/app.css') }}?v=1.0.4">
     @stack('head')
 </head>
 <body>
@@ -26,9 +26,11 @@
             </div>
         </div>
 
+        <button type="button" class="sidebar-close" data-sidebar-close-button aria-label="Tutup navigasi">✕</button>
         <nav class="side-nav" aria-label="Navigasi utama">
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a>
             <a href="{{ route('transactions.index') }}" class="{{ request()->routeIs('transactions.*') || request()->routeIs('payments.*') ? 'active' : '' }}">Transaksi</a>
+            <a href="{{ route('reports.index') }}" class="{{ request()->routeIs('reports.*') ? 'active' : '' }}">Rekap Bulanan / Tahunan</a>
             <a href="{{ route('documents.index') }}" class="{{ request()->routeIs('documents.*') ? 'active' : '' }}">Invoice / Receipt</a>
             <a href="{{ route('customers.index') }}" class="{{ request()->routeIs('customers.*') ? 'active' : '' }}">Customer</a>
             <a href="{{ route('service-types.index') }}" class="{{ request()->routeIs('service-types.*') ? 'active' : '' }}">Jenis Jasa</a>
@@ -54,7 +56,7 @@
 
     <main class="main-area">
         <header class="topbar">
-            <button type="button" class="menu-button" data-sidebar-open aria-label="Buka menu">☰</button>
+            <button type="button" class="menu-button" data-sidebar-open aria-label="Buka menu" aria-controls="sidebar" aria-expanded="false">☰</button>
             <div class="topbar-title">
                 <span>@yield('eyebrow','Awi Code')</span>
                 <strong>@yield('page_title','Dashboard')</strong>
@@ -76,7 +78,7 @@
         </section>
     </main>
 </div>
-<script src="{{ asset('assets/app.js') }}?v=1.0.3" defer></script>
+<script src="{{ asset('assets/app.js') }}?v=1.0.4" defer></script>
 @stack('scripts')
 </body>
 </html>

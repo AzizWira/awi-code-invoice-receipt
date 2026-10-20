@@ -1,18 +1,24 @@
-Awi Code Invoice & Receipt Manager — Patch v1.0.3
-=================================================
+PATCH v1.0.4 — Awi Code Invoice & Receipt Manager
 
-Patch ini dibuat untuk baseline v1.0.2.
+Patch dibuat untuk source v1.0.3. Ekstrak ISI folder patch ke akar project.
+Fiturnya: responsive, rekap bulanan/tahunan & cetak/PDF, perbaikan stale subtotal/total dalam satu penyimpanan, alat audit total lama.
 
-Perubahan utama:
-1. Semua alert/confirm/prompt JavaScript native diganti modal/toast custom Awi Code.
-2. Dialog custom otomatis mengikuti Light Mode dan Dark Mode.
-3. Customer tetap bisa Arsip/Pulihkan, dan kini juga bisa Hapus Permanen.
-4. Hapus Permanen customer yang memiliki transaksi akan menghapus transaksi dan data turunannya setelah warning kuat.
-5. Asset cache-busting diperbarui ke v1.0.3.
+1. Backup database dan project.
+2. Copy file patch, replace/merge di project. Jangan hapus file project yang lain.
+3. php artisan optimize:clear
+4. php artisan awicode:recalculate-totals (dry-run, aman)
+5. Uji tambah item setelah DP cukup 1 kali save.
 
-Cara pasang:
-- Extract isi patch ke root project dan replace file yang sama.
-- Jalankan: php artisan optimize:clear
-- Restart php artisan serve bila sedang berjalan.
+Khusus Hostinger folder app/ & public_html/: setelah git pull, jalankan:
+  cd ~/domains/invoice.awicode.com
+  cp app/public/assets/app.css public_html/assets/app.css
+  cp app/public/assets/app.js public_html/assets/app.js
+  cd app
+  /opt/alt/php84/usr/bin/php artisan optimize:clear
 
-Tidak ada migration baru pada v1.0.3.
+Tidak perlu migration. Jangan jalankan migrate:fresh.
+Jika ingin memperbaiki transaksi lama yang tidak sinkron: backup database dan jalankan
+  php artisan awicode:recalculate-totals --apply
+Perintah ini tidak mengubah snapshot dokumen yang sudah dibagikan.
+
+Catatan lengkap: README.md & docs/QA-v1.0.4.md.

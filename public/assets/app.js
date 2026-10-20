@@ -141,8 +141,37 @@
 
   const sidebar = document.getElementById('sidebar');
   const backdrop = document.querySelector('[data-sidebar-close]');
-  document.querySelectorAll('[data-sidebar-open]').forEach(btn => btn.addEventListener('click', () => { sidebar?.classList.add('open'); backdrop?.classList.add('show'); }));
-  backdrop?.addEventListener('click', () => { sidebar?.classList.remove('open'); backdrop.classList.remove('show'); });
+
+  const menuButton = document.querySelector('[data-sidebar-open]');
+  const closeSidebar = () => {
+    sidebar?.classList.remove('open');
+    backdrop?.classList.remove('show');
+    menuButton?.setAttribute('aria-expanded', 'false');
+  };
+  const openSidebar = () => {
+    sidebar?.classList.add('open');
+    backdrop?.classList.add('show');
+    menuButton?.setAttribute('aria-expanded', 'true');
+  };
+  menuButton?.addEventListener('click', openSidebar);
+  backdrop?.addEventListener('click', closeSidebar);
+  document.querySelector('[data-sidebar-close-button]')?.addEventListener('click', closeSidebar);
+  sidebar?.querySelectorAll('a[href]')?.forEach(link => link.addEventListener('click', closeSidebar));
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeSidebar(); });
+  window.addEventListener('resize', () => { if (window.innerWidth > 1100) closeSidebar(); });
+
+  const reportMode = document.querySelectorAll('[data-report-mode]');
+  const reportMonth = document.querySelector('[data-report-month]');
+  const syncReportMode = () => {
+    const isMonthly = document.querySelector('[data-report-mode]:checked')?.value !== 'year';
+    if (reportMonth) {
+      reportMonth.hidden = !isMonthly;
+      reportMonth.querySelectorAll('select').forEach(select => { select.disabled = !isMonthly; });
+    }
+  };
+  reportMode.forEach(radio => radio.addEventListener('change', syncReportMode));
+  syncReportMode();
+  document.querySelector('[data-print-report]')?.addEventListener('click', () => window.print());
 
   document.querySelectorAll('form[data-submit-lock]').forEach(form => {
     form.addEventListener('submit', (event) => {

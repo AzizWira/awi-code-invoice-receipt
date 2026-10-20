@@ -15,14 +15,14 @@
 </form>
 <div class="card">
 @if($transactions->isEmpty())<div class="empty-state"><strong>Belum ada transaksi</strong><span>Buat transaksi pertama Awi Code.</span></div>@else
-<div class="table-wrap"><table class="data-table"><thead><tr><th>Customer / Project</th><th>Total</th><th>Dibayar</th><th>Pembayaran</th><th>Dokumen</th><th>Tanggal</th><th></th></tr></thead><tbody>
+<div class="table-wrap"><table class="data-table responsive-cards"><thead><tr><th>Customer / Project</th><th>Total</th><th>Dibayar</th><th>Pembayaran</th><th>Dokumen</th><th>Tanggal</th><th></th></tr></thead><tbody>
 @foreach($transactions as $t)
 <tr>
-<td><div class="table-title">{{ $t->customer->company_name ?: $t->customer->name }}</div><div class="table-sub">{{ $t->project_name }} · {{ $t->serviceLabel() }}</div></td>
-<td class="money">{{ \App\Support\Money::rupiah($t->grand_total) }}</td><td class="money">{{ \App\Support\Money::rupiah($t->total_paid) }}</td>
-<td><span class="badge {{ $t->payment_status==='lunas'?'success':($t->payment_status==='sebagian'?'warning':'') }}">{{ $t->paymentStatusLabel() }}</span></td>
-<td>@if($t->documents->isEmpty())<span class="muted">—</span>@else @foreach($t->documents as $d)<span class="badge {{ $d->type==='receipt'?'success':'info' }}">{{ $d->type }}</span> @endforeach @endif</td>
-<td>{{ $t->transaction_date?->format('d M Y') }}</td><td><a class="btn btn-ghost" href="{{ route('transactions.show',$t) }}">Detail</a></td>
+<td data-label="Customer / Project"><div class="table-title">{{ $t->customer->company_name ?: $t->customer->name }}</div><div class="table-sub">{{ $t->project_name }} · {{ $t->serviceLabel() }}</div></td>
+<td data-label="Total" class="money">{{ \App\Support\Money::rupiah($t->grand_total) }}</td><td data-label="Dibayar" class="money">{{ \App\Support\Money::rupiah($t->total_paid) }}</td>
+<td data-label="Pembayaran"><span class="badge {{ $t->payment_status==='lunas'?'success':($t->payment_status==='sebagian'?'warning':'') }}">{{ $t->paymentStatusLabel() }}</span></td>
+<td data-label="Dokumen">@if($t->documents->isEmpty())<span class="muted">—</span>@else @foreach($t->documents as $d)<span class="badge {{ $d->type==='receipt'?'success':'info' }}">{{ $d->type }}</span> @endforeach @endif</td>
+<td data-label="Tanggal">{{ $t->transaction_date?->format('d M Y') }}</td><td data-label="Aksi"><a class="btn btn-ghost" href="{{ route('transactions.show',$t) }}">Detail</a></td>
 </tr>@endforeach
 </tbody></table></div><div class="card-pad">{{ $transactions->links('components.pagination') }}</div>@endif
 </div>

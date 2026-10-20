@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TransactionController;
@@ -18,6 +19,8 @@ Route::get('/d/{token}/pdf',[DocumentController::class,'publicPdf'])->name('publ
 
 Route::middleware('auth')->group(function () {
     Route::get('/',DashboardController::class)->name('dashboard');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
     Route::post('/logout',[AuthController::class,'destroy'])->name('logout');
 
     Route::resource('customers',CustomerController::class)->except('destroy');

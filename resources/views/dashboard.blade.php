@@ -19,6 +19,7 @@
     <a class="btn btn-primary" href="{{ route('transactions.create') }}">+ Buat Transaksi</a>
     <a class="btn btn-ghost" href="{{ route('customers.create') }}">+ Tambah Customer</a>
     <a class="btn btn-ghost" href="{{ route('documents.index') }}">Lihat Invoice / Receipt</a>
+    <a class="btn btn-ghost" href="{{ route('reports.index') }}">Rekap Bulanan / Tahunan</a>
 </div>
 
 <div class="card">
@@ -27,20 +28,20 @@
         <div class="empty-state"><strong>Belum ada transaksi</strong><span>Buat transaksi pertama Awi Code untuk mulai menghasilkan Invoice atau Receipt.</span></div>
     @else
     <div class="table-wrap">
-        <table class="data-table">
+        <table class="data-table responsive-cards">
             <thead><tr><th>Customer / Project</th><th>Total</th><th>Dibayar</th><th>Status</th><th>Tanggal</th><th></th></tr></thead>
             <tbody>
             @foreach($recent as $t)
                 <tr>
-                    <td><div class="table-title">{{ $t->customer->company_name ?: $t->customer->name }}</div><div class="table-sub">{{ $t->project_name }}</div></td>
-                    <td class="money">{{ \App\Support\Money::rupiah($t->grand_total) }}</td>
-                    <td class="money">{{ \App\Support\Money::rupiah($t->total_paid) }}</td>
-                    <td>
+                    <td data-label="Customer / Project"><div class="table-title">{{ $t->customer->company_name ?: $t->customer->name }}</div><div class="table-sub">{{ $t->project_name }}</div></td>
+                    <td data-label="Total" class="money">{{ \App\Support\Money::rupiah($t->grand_total) }}</td>
+                    <td data-label="Dibayar" class="money">{{ \App\Support\Money::rupiah($t->total_paid) }}</td>
+                    <td data-label="Status">
                         @php($class=$t->payment_status==='lunas'?'success':($t->payment_status==='sebagian'?'warning':''))
                         <span class="badge {{ $class }}">{{ $t->paymentStatusLabel() }}</span>
                     </td>
-                    <td>{{ $t->transaction_date?->format('d M Y') }}</td>
-                    <td><a class="btn btn-ghost" href="{{ route('transactions.show',$t) }}">Detail</a></td>
+                    <td data-label="Tanggal">{{ $t->transaction_date?->format('d M Y') }}</td>
+                    <td data-label="Aksi"><a class="btn btn-ghost" href="{{ route('transactions.show',$t) }}">Detail</a></td>
                 </tr>
             @endforeach
             </tbody>
